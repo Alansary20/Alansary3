@@ -8,12 +8,16 @@
 <title>القرآن الكريم - أفضل القراء</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+/* scroll fix */
+html{height:100%;height:-webkit-fill-available}
+body{min-height:100%;min-height:-webkit-fill-available}
+
 :root{--bg:#0a1f0d;--card:#1a3d1f;--card2:#1f4726;--bdr:rgba(180,145,55,0.18);--bdr2:rgba(180,145,55,0.35);--gold:#c9a032;--gold2:#e8c96a;--grn:#2d7a3a;--grn2:#3d9e4d;--txt:#f0ede4;--txt2:#b8c9b0;--txt3:#7a9070;--r:16px}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
+html,body{height:100%;height:-webkit-fill-available;overflow:hidden}
 body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--txt);display:flex;flex-direction:column}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 10% 0%,rgba(45,122,58,0.15) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 90% 100%,rgba(201,160,50,0.08) 0%,transparent 60%);pointer-events:none;z-index:0}
-.view{display:none;flex-direction:column;height:100%;position:relative;z-index:1;overflow:hidden}
+.view{display:none;flex-direction:column;height:100%;position:relative;z-index:1}.view.active{display:flex}
 .view.active{display:flex}
 .topbar{padding:14px 16px 10px;background:linear-gradient(180deg,rgba(10,31,13,.98),rgba(10,31,13,.85));backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);flex-shrink:0}
 .trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -31,7 +35,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1px solid var(--bdr);background:rgba(255,255,255,.04);color:var(--txt2);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
 .tab.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--bg);border-color:transparent;box-shadow:0 2px 12px rgba(201,160,50,.4)}
-.hs{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:72px}
+.hs{flex:1;min-height:0;overflow-y:scroll;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:80px}
 .hs::-webkit-scrollbar{display:none}
 .sh{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
 .sh h2{font-size:14px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:7px}
@@ -88,11 +92,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .stbtns{display:flex;gap:4px}
 .stb{padding:5px 10px;border-radius:9px;border:1px solid var(--bdr);background:rgba(255,255,255,.04);color:var(--txt3);font-size:11px;cursor:pointer;white-space:nowrap;transition:all .2s}
 .stb.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--bg);border-color:transparent}
-.ssl{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 14px 80px}
+.ssl{flex:1;min-height:0;overflow-y:scroll;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 14px 80px}
 .ssl::-webkit-scrollbar{display:none}
 .si{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--r);border:1px solid var(--bdr);background:rgba(255,255,255,.03);margin-bottom:6px;cursor:pointer;transition:all .2s}
 .si:active{background:rgba(201,160,50,.07);transform:scale(.98)}
-.si.na{opacity:.35;cursor:default}
+
 .si.na:active{transform:none}
 .snum{width:38px;height:38px;border-radius:10px;flex-shrink:0;background:var(--card2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--gold2)}
 .sinf{flex:1;min-width:0}
@@ -183,7 +187,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="sw"><span style="color:var(--txt3);font-size:15px">🔍</span><input type="text" id="srch" placeholder="ابحث عن قارئ..." oninput="renderHome()"></div>
   </div>
   <div class="hs" id="hs">
-    </div>
     <div class="sh"><h2>القراء</h2><span class="sbd" id="rcnt">0</span></div>
     <div class="rl" id="rl"><div style="text-align:center;padding:30px;color:var(--txt3)"><span class="spin" style="font-size:28px;display:block;margin-bottom:8px">⏳</span><p>جارٍ تحميل القراء...</p></div></div>
   </div>
@@ -449,11 +452,20 @@ function processAPI(list){
 }
 
 function hasSurah(rc,rwi,num){
+  if(!rc||!rc.rw)return true;
   const rw=rc.rw[rwi];
-  if(!rw)return false;
-  if(!rw.sl)return true;
-  const list=(typeof rw.sl==='string'?rw.sl.split(','):rw.sl.map?rw.sl.map(String):[]);
-  return list.includes(String(num));
+  if(!rw)return true;
+  // no sl = all surahs available
+  if(rw.sl===undefined||rw.sl===null||rw.sl==='')return true;
+  // parse sl
+  let list;
+  try{
+    if(typeof rw.sl==='string') list=rw.sl.split(',').map(x=>parseInt(x.trim())).filter(x=>!isNaN(x));
+    else if(Array.isArray(rw.sl)) list=rw.sl.map(x=>parseInt(x)).filter(x=>!isNaN(x));
+    else return true;
+    if(!list.length)return true;
+  }catch(e){return true;}
+  return list.includes(parseInt(num));
 }
 
 function burl(base,num){return base.replace(/\/$/,'')+'/'+String(num).padStart(3,'0')+'.mp3';}
@@ -500,18 +512,28 @@ function selRw(idx,el){S.rwi=idx;document.querySelectorAll('.rtab').forEach(t=>t
 function renderSurahs(){
   const q=document.getElementById('ssrch').value.trim();
   const sc=document.getElementById('ssl');
-  let list=SH;
+  const r=S.rc;
+  // فلترة السور المتاحة فقط
+  let list=SH.filter(s=>{
+    const rw=r&&r.rw&&r.rw[S.rwi];
+    if(!rw||!rw.sl||rw.sl===null||rw.sl==='')return true;
+    try{
+      let arr;
+      if(typeof rw.sl==='string')arr=rw.sl.split(',').map(x=>parseInt(x.trim()));
+      else if(Array.isArray(rw.sl))arr=rw.sl.map(x=>parseInt(x));
+      else return true;
+      return arr.includes(parseInt(s[0]));
+    }catch(e){return true;}
+  });
   if(S.stype!=='all')list=list.filter(s=>s[4]===S.stype);
   if(q)list=list.filter(s=>s[1].includes(q)||s[2].toLowerCase().includes(q.toLowerCase())||String(s[0]).includes(q));
   if(!list.length){sc.innerHTML='<div class="empty"><div class="ei">🔍</div><p>لا توجد سور</p></div>';return;}
-  const r=S.rc;
   sc.innerHTML=list.map(s=>{
     const[num,name,en,ayat,type]=s;
-    const avail=hasSurah(r,S.rwi,num);
-    const isNow=S.rc&&S.rc.id===r.id&&S.si===num-1&&S.playing;
+    const isNow=r&&S.rc.id===r.id&&S.si===num-1&&S.playing;
     const key=`${r.id}_${S.rwi}_${num}`;
     const isFav=S.favS[key];
-    return `<div class="si ${avail?'':'na'}" onclick="${avail?`playSurah(${num-1})`:''}"><div class="snum">${num}</div><div class="sinf"><div class="sar">${name}</div><div class="sen">${en} · ${ayat} آية</div></div><div><span class="stype ${type==='m'?'m':'k'}">${type==='m'?'مدنية':'مكية'}</span></div><div class="sps"><button class="sp ${isNow?'now':''}" onclick="event.stopPropagation();${avail?`playSurah(${num-1})`:''}">${isNow?'⏸':'▶'}</button><button class="sfv ${isFav?'on':''}" onclick="event.stopPropagation();toggleFavS('${key}',this)">${isFav?'❤':'♡'}</button></div></div>`;
+    return `<div class="si" onclick="playSurah(${num-1})"><div class="snum">${num}</div><div class="sinf"><div class="sar">${name}</div><div class="sen">${en} · ${ayat} آية</div></div><div><span class="stype ${type==='m'?'m':'k'}">${type==='m'?'مدنية':'مكية'}</span></div><div class="sps"><button class="sp ${isNow?'now':''}" onclick="event.stopPropagation();playSurah(${num-1})">${isNow?'⏸':'▶'}</button><button class="sfv ${isFav?'on':''}" onclick="event.stopPropagation();toggleFavS('${key}',this)">${isFav?'❤':'♡'}</button></div></div>`;
   }).join('');
 }
 function setStype(el){S.stype=el.dataset.st;document.querySelectorAll('.stb').forEach(b=>b.classList.toggle('on',b===el));renderSurahs();}
