@@ -112,8 +112,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .sfv{width:30px;height:30px;border-radius:50%;border:1px solid var(--bdr);background:transparent;color:var(--txt3);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
 .sfv.on{color:var(--gold);border-color:var(--gold)}
 .sfv:active{transform:scale(.88)}
-.mini{position:fixed;bottom:58px;left:0;right:0;z-index:200;background:linear-gradient(90deg,rgba(15,41,18,.97),rgba(26,61,31,.97));backdrop-filter:blur(20px);border-top:1px solid var(--bdr2);padding:8px 14px;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);cursor:pointer}
-.mini.show{transform:translateY(0)}
+.sdl{width:30px;height:30px;border-radius:50%;border:1px solid var(--bdr);background:transparent;color:var(--txt3);font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.sdl.on{color:var(--grn2);border-color:var(--grn2)}
+.sdl.busy{color:var(--gold2);border-color:var(--gold2);font-size:8.5px}
+.sdl:active{transform:scale(.88)}
+.mini{position:fixed;bottom:-130px;left:0;right:0;z-index:200;background:linear-gradient(90deg,rgba(15,41,18,.97),rgba(26,61,31,.97));backdrop-filter:blur(20px);border-top:1px solid var(--bdr2);padding:8px 14px;transition:bottom .35s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.mini.show{bottom:58px}
 .mpp{height:2px;background:rgba(255,255,255,.1);border-radius:1px;margin-bottom:8px}
 .mpf{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:1px;width:0%}
 .mr2{display:flex;align-items:center;gap:10px}
@@ -209,6 +213,38 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="ssl" id="ssl"></div>
 </div>
 
+<div class="view" id="downV">
+  <div class="rtop">
+    <div class="brow"><button class="bbtn" onclick="goHome()">→</button><span class="rhn">التنزيلات</span><button class="bbtn" onclick="clearAllDownloads()" title="حذف كل التنزيلات">🗑</button></div>
+  </div>
+  <div class="hs" id="downHs">
+    <div class="sh"><h2>محفوظ للاستماع دون إنترنت</h2><span class="sbd" id="downCnt">0</span></div>
+    <div class="rl" id="downList"></div>
+  </div>
+</div>
+
+<div class="view" id="favV">
+  <div class="rtop">
+    <div class="brow"><button class="bbtn" onclick="goHome()">→</button><span class="rhn">المفضلة</span></div>
+  </div>
+  <div class="hs" id="favHs">
+    <div class="sh"><h2>القراء المفضلون</h2><span class="sbd" id="favRcnt">0</span></div>
+    <div class="rl" id="favRcList"></div>
+    <div class="hr"></div>
+    <div class="sh"><h2>التلاوات المفضلة</h2><span class="sbd" id="favScnt">0</span></div>
+    <div class="rl" id="favScList"></div>
+  </div>
+</div>
+
+<div class="view" id="histV">
+  <div class="rtop">
+    <div class="brow"><button class="bbtn" onclick="goHome()">→</button><span class="rhn">السجل</span><button class="bbtn" onclick="clearHistory()" title="مسح السجل">🗑</button></div>
+  </div>
+  <div class="hs" id="histHs">
+    <div class="rl" id="histList"></div>
+  </div>
+</div>
+
 <div class="mini" id="mini" onclick="openFP()">
   <div class="mpp"><div class="mpf" id="mpf"></div></div>
   <div class="mr2">
@@ -260,18 +296,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 
 <div class="bnav">
-  
-  <div class="bni" onclick="switchNav(1)"><span class="ni">⬇</span><span class="nl">التنزيلات</span></div>
-  <div class="bni" onclick="switchNav(2)"><span class="ni">🕐</span><span class="nl">السجل</span></div>
-  <div class="bni" onclick="switchNav(3)"><span class="ni">♡</span><span class="nl">المفضلة</span></div>
-  <div class="bni on" onclick="switchNav(4);showView('homeV')"><span class="ni">🎙</span><span class="nl">القراء</span></div>
-  <div class="bni" onclick="switchNav(5);showView('homeV')"><span class="ni">🏠</span><span class="nl">الرئيسية</span></div>
-</div>
-
-    <div class="fmhi">اضغط على القارئ لإضافته أو إزالته من قائمة المتميزين</div>
-    <div class="fmbd" id="fmbd"></div>
-    <div class="fmft"><button class="fmsv" onclick="saveFM()">💾 حفظ التغييرات</button></div>
-  </div>
+  <div class="bni" onclick="switchNav(1);openDownloads()"><span class="ni">⬇</span><span class="nl">التنزيلات</span></div>
+  <div class="bni" onclick="switchNav(2);openHistory()"><span class="ni">🕐</span><span class="nl">السجل</span></div>
+  <div class="bni" onclick="switchNav(3);openFavorites()"><span class="ni">♡</span><span class="nl">المفضلة</span></div>
+  <div class="bni on" onclick="switchNav(4);goHome()"><span class="ni">🎙</span><span class="nl">القراء</span></div>
+  <div class="bni" onclick="switchNav(5);goHome()"><span class="ni">🏠</span><span class="nl">الرئيسية</span></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -413,7 +442,7 @@ const STATIC=[
 
 // ═══ STATE ═══
 let RC=[];
-let S={tab:'all',stype:'all',fav:JSON.parse(localStorage.getItem('qfav')||'[]'),favS:JSON.parse(localStorage.getItem('qfavS')||'{}'),rc:null,rwi:0,si:0,playing:false,loop:false,sleepT:null,view:'home'};
+let S={tab:'all',stype:'all',fav:JSON.parse(localStorage.getItem('qfav')||'[]'),favS:JSON.parse(localStorage.getItem('qfavS')||'{}'),history:JSON.parse(localStorage.getItem('qhist')||'[]'),downloads:JSON.parse(localStorage.getItem('qdl')||'{}'),dlProgress:{},rc:null,rwi:0,si:0,playing:false,loop:false,sleepT:null,view:'home'};
 const aud=document.getElementById('aud');
 
 function enrich(r){const ci=cm(r.cc);return{...r,f:ci.f,t:ci.t,c:ci.n};}
@@ -533,7 +562,8 @@ function renderSurahs(){
     const isNow=r&&S.rc.id===r.id&&S.si===num-1&&S.playing;
     const key=`${r.id}_${S.rwi}_${num}`;
     const isFav=S.favS[key];
-    return `<div class="si" onclick="playSurah(${num-1})"><div class="snum">${num}</div><div class="sinf"><div class="sar">${name}</div><div class="sen">${en} · ${ayat} آية</div></div><div><span class="stype ${type==='m'?'m':'k'}">${type==='m'?'مدنية':'مكية'}</span></div><div class="sps"><button class="sp ${isNow?'now':''}" onclick="event.stopPropagation();playSurah(${num-1})">${isNow?'⏸':'▶'}</button><button class="sfv ${isFav?'on':''}" onclick="event.stopPropagation();toggleFavS('${key}',this)">${isFav?'❤':'♡'}</button></div></div>`;
+    const dst=dlBtnState(key);
+    return `<div class="si" onclick="playSurah(${num-1})"><div class="snum">${num}</div><div class="sinf"><div class="sar">${name}</div><div class="sen">${en} · ${ayat} آية</div></div><div><span class="stype ${type==='m'?'m':'k'}">${type==='m'?'مدنية':'مكية'}</span></div><div class="sps"><button class="sp ${isNow?'now':''}" onclick="event.stopPropagation();playSurah(${num-1})">${isNow?'⏸':'▶'}</button><button class="sfv ${isFav?'on':''}" onclick="event.stopPropagation();toggleFavS('${key}',this)">${isFav?'❤':'♡'}</button><button class="sdl ${dst.cls}" data-dlkey="${key}" onclick="event.stopPropagation();handleDlClick(${num})">${dst.txt}</button></div></div>`;
   }).join('');
 }
 function setStype(el){S.stype=el.dataset.st;document.querySelectorAll('.stb').forEach(b=>b.classList.toggle('on',b===el));renderSurahs();}
@@ -544,15 +574,29 @@ function playSurah(idx){
   if(S.si===idx&&aud.src&&!aud.paused){togglePlay();return;}
   S.si=idx;
   const surah=SH[idx];
-  const url=burl(S.rc.rw[S.rwi].u,surah[0]);
-  aud.src=url;aud.load();
-  aud.play().then(()=>{S.playing=true;updateUI();}).catch(()=>{
-    showToast('⏳ جارٍ التحميل...');
-    const onC=()=>{aud.play().then(()=>{S.playing=true;updateUI();}).catch(()=>showToast('⚠ تعذّر التشغيل'));aud.removeEventListener('error',onE);};
-    const onE=()=>{showToast('⚠ هذه السورة غير متاحة');aud.removeEventListener('canplaythrough',onC);};
-    aud.addEventListener('canplaythrough',onC,{once:true});
-    aud.addEventListener('error',onE,{once:true});
-  });
+  const key=dlKey(S.rc.id,S.rwi,surah[0]);
+  const remoteUrl=burl(S.rc.rw[S.rwi].u,surah[0]);
+  const startPlay=(src)=>{
+    aud.src=src;aud.load();
+    aud.play().then(()=>{S.playing=true;updateUI();addHistory(S.rc,S.rwi,surah);}).catch(()=>{
+      showToast('⏳ جارٍ التحميل...');
+      const onC=()=>{aud.play().then(()=>{S.playing=true;updateUI();}).catch(()=>showToast('⚠ تعذّر التشغيل'));aud.removeEventListener('error',onE);};
+      const onE=()=>{showToast('⚠ هذه السورة غير متاحة');aud.removeEventListener('canplaythrough',onC);};
+      aud.addEventListener('canplaythrough',onC,{once:true});
+      aud.addEventListener('error',onE,{once:true});
+    });
+  };
+  if(S.downloads[key]){
+    idbGet(key).then(blob=>{
+      if(blob){
+        if(S._blobUrl)URL.revokeObjectURL(S._blobUrl);
+        S._blobUrl=URL.createObjectURL(blob);
+        startPlay(S._blobUrl);
+      }else startPlay(remoteUrl);
+    }).catch(()=>startPlay(remoteUrl));
+    return;
+  }
+  startPlay(remoteUrl);
 }
 function quickPlay(id){
   const r=RC.find(x=>x.id===id);if(!r)return;
@@ -588,6 +632,9 @@ function updateUI(){
   document.getElementById('fpfav').textContent=S.favS[key]?'❤':'♡';
   renderHome();
   if(S.view==='reciter')renderSurahs();
+  if(S.view==='favorites'){renderFavReciters();renderFavSurahs();}
+  if(S.view==='history')renderHistory();
+  if(S.view==='downloads')renderDownloads();
 }
 function openFP(){document.getElementById('fp').classList.add('open');}
 function closeFP(){document.getElementById('fp').classList.remove('open');}
@@ -597,12 +644,164 @@ function downloadCur(){if(!aud.src){showToast('⚠ لا يوجد تشغيل');re
 function addPL(){showToast('➕ تمت الإضافة');}
 function toggleFav(id){const i=S.fav.indexOf(id);if(i===-1)S.fav.push(id);else S.fav.splice(i,1);localStorage.setItem('qfav',JSON.stringify(S.fav));renderHome();}
 function toggleFavSurah(){if(!S.rc)return;const key=`${S.rc.id}_${S.rwi}_${SH[S.si][0]}`;if(S.favS[key])delete S.favS[key];else S.favS[key]=true;localStorage.setItem('qfavS',JSON.stringify(S.favS));updateUI();}
-function toggleFavS(key,btn){if(S.favS[key]){delete S.favS[key];btn.textContent='♡';btn.classList.remove('on');}else{S.favS[key]=true;btn.textContent='❤';btn.classList.add('on');}localStorage.setItem('qfavS',JSON.stringify(S.favS));}
+function toggleFavS(key,btn){if(S.favS[key]){delete S.favS[key];}else{S.favS[key]=true;}if(btn){btn.textContent=S.favS[key]?'❤':'♡';btn.classList.toggle('on',!!S.favS[key]);}localStorage.setItem('qfavS',JSON.stringify(S.favS));}
 
 function setTab(el){S.tab=el.dataset.t;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t===el));renderHome();document.getElementById('hs').scrollTop=0;}
 function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(v).classList.add('active');}
 function goHome(){S.view='home';showView('homeV');renderHome();}
-function switchNav(idx){document.querySelectorAll('.bni').forEach((el,i)=>el.classList.toggle('on',i===idx));}
+function switchNav(idx){document.querySelectorAll('.bni').forEach((el,i)=>el.classList.toggle('on',i===idx-1));}
+
+// ═══ المفضلة ═══
+function openFavorites(){S.view='favorites';showView('favV');renderFavReciters();renderFavSurahs();}
+function renderFavReciters(){
+  const list=document.getElementById('favRcList');
+  const favRc=RC.filter(r=>S.fav.includes(r.id));
+  document.getElementById('favRcnt').textContent=favRc.length;
+  if(!favRc.length){list.innerHTML='<div class="empty"><div class="ei">♡</div><p>لا يوجد قراء في المفضلة بعد<br>اضغط على ♡ بجانب أي قارئ لإضافته</p></div>';return;}
+  list.innerHTML=favRc.map((r,i)=>{
+    const isNow=S.rc&&S.rc.id===r.id&&S.playing;
+    return `<div class="rc" style="animation-delay:${Math.min(i,8)*.04}s" onclick="openRec(${r.id})"><div class="rav">🎙</div><div class="ri"><div class="rn">${r.n}</div><div class="chips">${r.rw.map(x=>`<span class="chip">${x.n}</span>`).join('')}</div></div><div class="racts"><button class="pb ${isNow?'now':''}" onclick="event.stopPropagation();quickPlay(${r.id})">${isNow?'⏸':'▶'}</button><button class="fb on" onclick="event.stopPropagation();toggleFav(${r.id});renderFavReciters()">❤</button></div></div>`;
+  }).join('');
+}
+function renderFavSurahs(){
+  const list=document.getElementById('favScList');
+  const keys=Object.keys(S.favS).filter(k=>S.favS[k]);
+  document.getElementById('favScnt').textContent=keys.length;
+  if(!keys.length){list.innerHTML='<div class="empty"><div class="ei">♡</div><p>لا توجد تلاوات في المفضلة بعد</p></div>';return;}
+  list.innerHTML=keys.map(key=>{
+    const parts=key.split('_');const rcId=parts[0],rwi=parseInt(parts[1]),num=parseInt(parts[2]);
+    const r=RC.find(x=>String(x.id)===String(rcId));const surah=SH.find(s=>s[0]===num);
+    if(!r||!surah)return'';
+    const rw=r.rw[rwi];
+    const isNow=S.rc&&String(S.rc.id)===String(rcId)&&S.rwi===rwi&&S.si===num-1&&S.playing;
+    return `<div class="rc" onclick="playFav('${rcId}',${rwi},${num-1})"><div class="rav">📖</div><div class="ri"><div class="rn">${surah[1]}</div><div class="rs">${r.n} · ${rw?rw.n:''}</div></div><div class="racts"><button class="pb ${isNow?'now':''}" onclick="event.stopPropagation();playFav('${rcId}',${rwi},${num-1})">${isNow?'⏸':'▶'}</button><button class="fb on" onclick="event.stopPropagation();toggleFavS('${key}');renderFavSurahs()">❤</button></div></div>`;
+  }).join('');
+}
+function playFav(rcId,rwi,idx){
+  const r=RC.find(x=>String(x.id)===String(rcId));if(!r)return;
+  S.rc=r;S.rwi=rwi;playSurah(idx);
+}
+
+// ═══ السجل ═══
+function addHistory(r,rwi,surah){
+  if(!r)return;
+  S.history.unshift({rcId:r.id,rcName:r.n,rwi:rwi,rwName:r.rw[rwi].n,num:surah[0],name:surah[1],ts:Date.now()});
+  if(S.history.length>100)S.history=S.history.slice(0,100);
+  localStorage.setItem('qhist',JSON.stringify(S.history));
+  if(S.view==='history')renderHistory();
+}
+function openHistory(){S.view='history';showView('histV');renderHistory();}
+function renderHistory(){
+  const list=document.getElementById('histList');
+  const hist=S.history||[];
+  if(!hist.length){list.innerHTML='<div class="empty"><div class="ei">🕐</div><p>لا يوجد سجل استماع بعد</p></div>';return;}
+  list.innerHTML=hist.map(h=>{
+    const isNow=S.rc&&String(S.rc.id)===String(h.rcId)&&S.rwi===h.rwi&&S.si===h.num-1&&S.playing;
+    return `<div class="rc" onclick="playFav('${h.rcId}',${h.rwi},${h.num-1})"><div class="rav">🕐</div><div class="ri"><div class="rn">${h.name}</div><div class="rs">${h.rcName} · ${h.rwName} — ${relTime(h.ts)}</div></div><div class="racts"><button class="pb ${isNow?'now':''}" onclick="event.stopPropagation();playFav('${h.rcId}',${h.rwi},${h.num-1})">${isNow?'⏸':'▶'}</button></div></div>`;
+  }).join('');
+}
+function relTime(ts){
+  const diff=Date.now()-ts,m=Math.floor(diff/60000);
+  if(m<1)return'الآن';if(m<60)return`منذ ${m} د`;
+  const h=Math.floor(m/60);if(h<24)return`منذ ${h} س`;
+  return`منذ ${Math.floor(h/24)} يوم`;
+}
+function clearHistory(){S.history=[];localStorage.removeItem('qhist');renderHistory();showToast('🗑 تم مسح السجل');}
+
+// ═══ التنزيلات (للاستماع دون إنترنت) ═══
+function dlKey(rcId,rwi,num){return `${rcId}_${rwi}_${num}`;}
+let DB=null;
+function openDB(){
+  return new Promise((res,rej)=>{
+    if(DB)return res(DB);
+    if(!window.indexedDB)return rej(new Error('no idb'));
+    const req=indexedDB.open('qdb',1);
+    req.onupgradeneeded=()=>{req.result.createObjectStore('dl');};
+    req.onsuccess=()=>{DB=req.result;res(DB);};
+    req.onerror=()=>rej(req.error);
+  });
+}
+function idbPut(key,blob){return openDB().then(db=>new Promise((res,rej)=>{const tx=db.transaction('dl','readwrite');tx.objectStore('dl').put(blob,key);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);}));}
+function idbGet(key){return openDB().then(db=>new Promise((res,rej)=>{const tx=db.transaction('dl','readonly');const rq=tx.objectStore('dl').get(key);rq.onsuccess=()=>res(rq.result);rq.onerror=()=>rej(rq.error);}));}
+function idbDel(key){return openDB().then(db=>new Promise((res,rej)=>{const tx=db.transaction('dl','readwrite');tx.objectStore('dl').delete(key);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);})).catch(()=>{});}
+
+function dlBtnState(key){
+  if(S.downloads[key])return{cls:'on',txt:'✓'};
+  if(S.dlProgress[key]!==undefined)return{cls:'busy',txt:S.dlProgress[key]+'%'};
+  return{cls:'',txt:'⬇'};
+}
+function refreshDownloadUI(key){
+  document.querySelectorAll(`[data-dlkey="${key}"]`).forEach(btn=>{
+    const st=dlBtnState(key);
+    btn.className='sdl '+st.cls;
+    btn.textContent=st.txt;
+  });
+}
+function handleDlClick(num){
+  if(!S.rc)return;
+  const key=dlKey(S.rc.id,S.rwi,num);
+  if(S.downloads[key]){deleteDownload(key);return;}
+  if(S.dlProgress[key]!==undefined)return;
+  const surah=SH.find(s=>s[0]===num);
+  const rw=S.rc.rw[S.rwi];
+  startDownload(S.rc.id,S.rc.n,S.rwi,rw.n,num,surah[1],burl(rw.u,num));
+}
+function startDownload(rcId,rcName,rwi,rwName,num,name,url){
+  const key=dlKey(rcId,rwi,num);
+  S.dlProgress[key]=0;
+  refreshDownloadUI(key);
+  showToast('⬇ جارٍ تحميل: '+name);
+  const xhr=new XMLHttpRequest();
+  xhr.open('GET',url,true);
+  xhr.responseType='blob';
+  xhr.onprogress=(e)=>{if(e.lengthComputable){S.dlProgress[key]=Math.round((e.loaded/e.total)*100);refreshDownloadUI(key);}};
+  xhr.onload=()=>{
+    if(xhr.status===200||xhr.status===0){
+      const blob=xhr.response;
+      idbPut(key,blob).then(()=>{
+        S.downloads[key]={rcId,rcName,rwi,rwName,num,name,size:blob.size,ts:Date.now()};
+        localStorage.setItem('qdl',JSON.stringify(S.downloads));
+        delete S.dlProgress[key];
+        showToast('✅ تم تحميل: '+name);
+        refreshDownloadUI(key);
+        if(S.view==='downloads')renderDownloads();
+      }).catch(()=>{delete S.dlProgress[key];showToast('⚠ تعذّر حفظ الملف');refreshDownloadUI(key);});
+    }else{delete S.dlProgress[key];showToast('⚠ فشل التحميل');refreshDownloadUI(key);}
+  };
+  xhr.onerror=()=>{delete S.dlProgress[key];showToast('⚠ فشل التحميل، تحقق من الاتصال');refreshDownloadUI(key);};
+  xhr.send();
+}
+function openDownloads(){S.view='downloads';showView('downV');renderDownloads();}
+function renderDownloads(){
+  const list=document.getElementById('downList');
+  const items=Object.entries(S.downloads).sort((a,b)=>b[1].ts-a[1].ts);
+  document.getElementById('downCnt').textContent=items.length;
+  if(!items.length){list.innerHTML='<div class="empty"><div class="ei">⬇</div><p>لا توجد تلاوات محمّلة بعد<br>اضغط على ⬇ بجانب أي سورة لحفظها للاستماع دون إنترنت</p></div>';return;}
+  const totalMB=(items.reduce((a,[,m])=>a+(m.size||0),0)/1048576).toFixed(1);
+  list.innerHTML=`<div style="text-align:center;color:var(--txt3);font-size:11px;margin-bottom:8px">المساحة المستخدمة: ${totalMB} MB</div>`+items.map(([key,m])=>{
+    const isNow=S.rc&&String(S.rc.id)===String(m.rcId)&&S.rwi===m.rwi&&S.si===m.num-1&&S.playing;
+    return `<div class="rc" onclick="playFav('${m.rcId}',${m.rwi},${m.num-1})"><div class="rav">✅</div><div class="ri"><div class="rn">${m.name}</div><div class="rs">${m.rcName} · ${m.rwName}</div></div><div class="racts"><button class="pb ${isNow?'now':''}" onclick="event.stopPropagation();playFav('${m.rcId}',${m.rwi},${m.num-1})">${isNow?'⏸':'▶'}</button><button class="fb" onclick="event.stopPropagation();deleteDownload('${key}')">🗑</button></div></div>`;
+  }).join('');
+}
+function deleteDownload(key){
+  idbDel(key);
+  delete S.downloads[key];
+  localStorage.setItem('qdl',JSON.stringify(S.downloads));
+  refreshDownloadUI(key);
+  if(S.view==='downloads')renderDownloads();
+  showToast('🗑 تم حذف الملف المحمّل');
+}
+function clearAllDownloads(){
+  const keys=Object.keys(S.downloads);
+  if(!keys.length){showToast('لا توجد تنزيلات لحذفها');return;}
+  keys.forEach(k=>{idbDel(k);});
+  S.downloads={};
+  localStorage.setItem('qdl','{}');
+  keys.forEach(refreshDownloadUI);
+  renderDownloads();
+  showToast('🗑 تم حذف جميع التنزيلات');
+}
+
 let toastT;
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2500);}
 
